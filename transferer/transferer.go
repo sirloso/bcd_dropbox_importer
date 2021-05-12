@@ -138,15 +138,16 @@ func process(wg *sync.WaitGroup, c chan float32, user string, from Files, to Fil
 	// if not present create folder in destination
 	userPath := fmt.Sprintf("%s/%s", toPath, user)
 	_, err := os.Stat(userPath)
+	fmt.Println(userPath, err)
 	if os.IsNotExist(err) {
 		// create folder in destination
 		createFolder(userPath)
 	}
-	fmt.Println("processing user", user)
 
 	// itterate over orders
 	for order := range from[user] {
-		orderPath := fmt.Sprintf("%s/%s/", userPath, order)
+		orderPath := fmt.Sprintf("%s/%s", userPath, order)
+		fmt.Println(orderPath, err)
 		_, err := os.Stat(orderPath)
 		// if order not present in destination; create order
 		fmt.Println("processing order", order)
@@ -156,10 +157,11 @@ func process(wg *sync.WaitGroup, c chan float32, user string, from Files, to Fil
 
 		// itterate over rolls
 		for roll := range from[user][order] {
-			// if roll not present in destination
-			rollPath := fmt.Sprintf("%s/%s/", orderPath, roll)
-			_, err := os.Stat(rollPath)
 			fmt.Println("processing roll", roll)
+			// if roll not present in destination
+			rollPath := fmt.Sprintf("%s/%s", orderPath, roll)
+			_, err := os.Stat(rollPath)
+			fmt.Println(rollPath, err)
 			if os.IsNotExist(err) {
 				// create roll
 				createFolder(rollPath)
@@ -171,6 +173,8 @@ func process(wg *sync.WaitGroup, c chan float32, user string, from Files, to Fil
 
 					in, _ := os.Open(fromFilePath)
 					out, _ := os.Create(toFilePath)
+
+					fmt.Println(toFilePath, fromFilePath)
 
 					_, err = io.Copy(out, in)
 
@@ -210,5 +214,6 @@ func ui(users map[string]chan float32, verbose bool, rename bool) {
 }
 
 func createFolder(path string) {
+	fmt.Println("creating folder", path)
 	os.Mkdir(path, 0755)
 }
