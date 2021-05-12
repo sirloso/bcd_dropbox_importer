@@ -120,7 +120,7 @@ func markAsUsed(path string) {
 func handleErr(err error) {
 	if err != nil {
 		fmt.Println(err)
-		panic("path error")
+		// panic("path error")
 	}
 }
 
@@ -134,12 +134,6 @@ func process(wg *sync.WaitGroup, c chan float32, user string, from Files, to Fil
 	for order := range from[user] {
 		rolls += float32(len(from[user][order]))
 	}
-
-	// total := rolls
-
-	// c <- processed / total
-
-	fmt.Println("sent")
 
 	// if not present create folder in destination
 	userPath := fmt.Sprintf("%s/%s", toPath, user)
@@ -165,7 +159,7 @@ func process(wg *sync.WaitGroup, c chan float32, user string, from Files, to Fil
 			// if roll not present in destination
 			rollPath := fmt.Sprintf("%s/%s/", orderPath, roll)
 			_, err := os.Stat(rollPath)
-			fmt.Println("processing roll", order)
+			fmt.Println("processing roll", roll)
 			if os.IsNotExist(err) {
 				// create roll
 				createFolder(rollPath)
